@@ -5,11 +5,13 @@
     <ClInclude Include="lexer\Characters.h" />
     <ClInclude Include="lexer\Language.h" />
     <ClInclude Include="lexer\Lexer.h" />
+    <ClInclude Include="token\Token.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer\Characters.cpp" />
     <ClCompile Include="lexer\Lexer.cpp" />
     <ClCompile Include="program\main.cpp" />
     <ClCompile Include="lexer\Language.cpp" />
+    <ClCompile Include="token\Token.cpp" />
   </ItemGroup>
 </Project>

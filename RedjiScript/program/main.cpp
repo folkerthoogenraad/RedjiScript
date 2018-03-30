@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include "lexer/Lexer.h"
+
 #include "logger/log.h"
 
 int main() {
@@ -10,9 +11,14 @@ int main() {
 	
 	Lexer lexer(file);
 
-	while (lexer.next()) {
-		LOG(lexer.current());
-	}
+	auto result = lexer.tokenize();
+
+	for (auto err : lexer.getErrors())
+		LOG(err.toString());
+	
+	for (auto i : result)
+		LOG(i);
+
 
 	WAIT();
 }
