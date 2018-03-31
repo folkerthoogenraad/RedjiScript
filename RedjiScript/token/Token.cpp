@@ -43,14 +43,14 @@ namespace redji {
 			break;
 
 		case Token::KeywordIn:
-			o << "OPERATOR_KEYWORD";
+			o << "KeywordIn";
 			break;
 		case Token::KeywordReturn:
 			o << "KeywordReturn";
 			break;
 
 		case Token::KeywordIf:
-			o << "OPERATOR_KEYWORD";
+			o << "KeywordIf";
 			break;
 		case Token::KeywordElse:
 			o << "KeywordElse";
@@ -131,6 +131,9 @@ namespace redji {
 			break;
 		case Token::OperatorLookup:
 			o << "OperatorLookup";
+			break;
+		case Token::OperatorArrow:
+			o << "OperatorArrow";
 			break;
 		case Token::OperatorEquals:
 			o << "OperatorEquals";

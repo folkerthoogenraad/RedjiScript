@@ -6,6 +6,14 @@
     <ClInclude Include="lexer\Language.h" />
     <ClInclude Include="lexer\Lexer.h" />
     <ClInclude Include="token\Token.h" />
+    <ClInclude Include="parser\Parser.h" />
+    <ClInclude Include="ast\FunctionSyntax.h" />
+    <ClInclude Include="ast\StatementSyntax.h" />
+    <ClInclude Include="ast\NameAndTypeSyntax.h" />
+    <ClInclude Include="ast\TypeSyntax.h" />
+    <ClInclude Include="ast\BlockSyntax.h" />
+    <ClInclude Include="ast\ExpressionSyntax.h" />
+    <ClInclude Include="ast\ExpressionStatementSyntax.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer\Characters.cpp" />
@@ -13,5 +21,6 @@
     <ClCompile Include="program\main.cpp" />
     <ClCompile Include="lexer\Language.cpp" />
     <ClCompile Include="token\Token.cpp" />
+    <ClCompile Include="parser\Parser.cpp" />
   </ItemGroup>
 </Project>

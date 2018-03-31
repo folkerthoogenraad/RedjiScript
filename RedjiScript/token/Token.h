@@ -64,8 +64,9 @@ namespace redji {
 			OperatorBitOR,	// |
 			OperatorBitAnd,	// &
 
-			OperatorLookup,	// .
+			OperatorLookup,		// .
 			OperatorNot,		// !
+			OperatorArrow,		// ->
 
 			OperatorCompareGreater,	// >
 			OperatorCompareLess,	// <

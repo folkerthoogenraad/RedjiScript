@@ -7,6 +7,8 @@
 #include <vector>
 #include "logger/log.h"
 
+#include <assert.h>
+
 #include <sstream>
 
 #define LEXER_Error(x) throw std::exception(x)
@@ -277,6 +279,11 @@ namespace redji {
 				m_Current.m_Data = "-=";
 				m_Current.m_Type = Token::OperatorSubtractEqual;
 			}
+			else if (c == '>') {
+				m_Chars.next();
+				m_Current.m_Data = "->";
+				m_Current.m_Type = Token::OperatorArrow;
+			}
 			return m_Current;
 		}
 		else if (c == '*') {
@@ -439,6 +446,9 @@ namespace redji {
 		{
 			tokens.push_back(current());
 		}
+
+		// Add the end of file token
+		tokens.push_back(current());
 
 		return std::move(tokens);
 	}
