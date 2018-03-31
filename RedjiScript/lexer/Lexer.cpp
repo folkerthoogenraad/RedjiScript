@@ -1,5 +1,5 @@
 #include "Lexer.h"
-#include "Language.h"
+#include "lang/Language.h"
 
 #include <sstream>
 #include <iostream>

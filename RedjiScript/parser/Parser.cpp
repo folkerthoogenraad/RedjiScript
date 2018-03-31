@@ -94,11 +94,307 @@ namespace redji {
 		return nullptr;
 	}
 
-	std::shared_ptr<ExpressionSyntax> Parser::parseExpression()
+	std::shared_ptr<ExpressionSyntax> Parser::parseExpression(int detail)
 	{
-		// Well this is the interesting bit
+		// This obviously needs a lot more work and different shit, but whatever
+		// This works for now
+
+		//--------------------------------------------------------------//
+		//Value types
+		//--------------------------------------------------------------//
+		if (detail <= 0) {
+			return parseExpressionSimple();
+		}
+		//--------------------------------------------------------------//
+		// ()
+		//--------------------------------------------------------------//
+		else if (detail == 1) {
+			if (current().m_Type == Token::OpenBracket) {
+
+				//Consume (
+				next();
+
+				//Parse a full expression!
+				auto exp = parseExpression();
+
+				if (current().m_Type != Token::CloseBracket) {
+					unexpectedToken();
+
+					// Why tho?
+					return parseExpression(detail - 1);
+				}
+
+				//Consume )
+				next();
+
+				return exp;
+			}
+			else {
+				return parseExpression(detail - 1);
+			}
+		}
+
+		//--------------------------------------------------------------//
+		//Lookups and invocations (TODO postfix operators like ++ and --)
+		//--------------------------------------------------------------//
+		else if (detail == 2) {
+			auto lhs = parseExpression(detail - 1);
+
+			while (current().m_Type == Token::OperatorLookup || current().m_Type == Token::OpenBracket) {
+
+				if (current().m_Type == Token::OperatorLookup) {
+					auto exp = std::make_shared<LookupSyntax>();
+					exp->m_Token = current();
+
+					next();
+					
+					auto rhs = parseExpression(detail - 1);
+
+					exp->m_Lhs = lhs;
+					exp->m_Rhs = rhs;
+
+					lhs = exp;
+				}
+				else if (current().m_Type == Token::OpenBracket) {
+					auto exp = std::make_shared<InvokeSyntax>();
+
+					exp->m_Lhs = lhs;
+					exp->m_Token = current();
+
+					if (next().m_Type != Token::CloseBracket) {
+						auto rhs = parseExpression(); // Parse a full expression between these brackets
+						exp->m_Arguments = rhs;
+						if (current().m_Type != Token::CloseBracket) {
+							unexpectedToken();
+						}
+					}
+
+					//Consume the closing bracket
+					next();
+
+					lhs = exp;
+				}
+			}
+
+			return lhs;
+		}
+
+		//--------------------------------------------------------------//
+		// Prefix operators
+		//--------------------------------------------------------------//
+		else if (detail == 3) {
+			if (current().m_Type == Token::OperatorNot
+				|| current().m_Type == Token::OperatorAdd
+				|| current().m_Type == Token::OperatorSubtract) {
+				auto exp = std::make_shared<PrefixOperatorSyntax>();
+
+				exp->m_Token = current();
+
+				switch(current().m_Type) {
+				case Token::OperatorNot: exp->m_Operator = PrefixOperatorSyntax::Not; break;
+				case Token::OperatorAdd: exp->m_Operator = PrefixOperatorSyntax::Plus; break;
+				case Token::OperatorSubtract: exp->m_Operator = PrefixOperatorSyntax::Minus; break;
+				default:
+					// TODO 
+					break;
+				}
+
+				// Consume the operator
+				next();
+
+				exp->m_Rhs = parseExpression(detail);
+
+				return exp;
+			}
+			else {
+				return parseExpression(detail - 1);
+			}
+		}
+
+		//--------------------------------------------------------------//
+		// Multiplication and division
+		//--------------------------------------------------------------//
+		else if (detail == 4) {
+			auto lhs = parseExpression(detail - 1);
+
+			while (current().m_Type == Token::OperatorMultiply
+				|| current().m_Type == Token::OperatorDivide
+				|| current().m_Type == Token::OperatorModulo) {
+
+				auto exp = std::make_shared<OperatorSyntax>();
+				exp->m_Token = current();
+
+				exp->m_Lhs = lhs;
+
+				if (current().m_Type == Token::OperatorMultiply)
+					exp->m_Operator = OperatorSyntax::Multiply;
+				
+				else if (current().m_Type == Token::OperatorDivide)
+					exp->m_Operator = OperatorSyntax::Divide;
+
+				else if (current().m_Type == Token::OperatorModulo)
+					exp->m_Operator = OperatorSyntax::Modulo;
+
+				next(); // Consume the operator
+
+				exp->m_Rhs = parseExpression(detail - 1);
+
+				lhs = exp;
+			}
+
+			return lhs;
+		}
+
+		//--------------------------------------------------------------//
+		// Adding and subtracting
+		//--------------------------------------------------------------//
+		else if (detail == 5) {
+			auto lhs = parseExpression(detail - 1);
+
+			while (current().m_Type == Token::OperatorAdd
+				|| current().m_Type == Token::OperatorSubtract) {
+
+				auto exp = std::make_shared<OperatorSyntax>();
+				exp->m_Token = current();
+
+				exp->m_Lhs = lhs;
+
+				if(current().m_Type == Token::OperatorAdd)
+					exp->m_Operator = OperatorSyntax::Add;
+				else
+					exp->m_Operator = OperatorSyntax::Subtract;
+				
+				next();
+				exp->m_Rhs = parseExpression(detail - 1);
+
+				lhs = exp;
+			}
+
+			return lhs;
+		}
+
+		//--------------------------------------------------------------//
+		// Assignment
+		//--------------------------------------------------------------//
+		else if (detail == 6) {
+			auto lhs = parseExpression(detail - 1);
+
+			// TODO plus equals, etc etc
+			if (current().m_Type == Token::OperatorEquals) {
+
+				auto exp = std::make_shared<AssignmentSyntax>();
+				exp->m_Token = current();
+
+				exp->m_Lhs = lhs;
+
+				next(); // Consume the operator
+				
+				exp->m_Rhs = parseExpression(detail);
+
+				return exp;
+			}
+
+			return lhs;
+		}
+
+		//--------------------------------------------------------------//
+		// Seperator
+		//--------------------------------------------------------------//
+		else if (detail == 7) {
+
+			auto lhs = parseExpression(detail - 1);
+
+			if (current().m_Type == Token::Seperator) {
+				auto exp = std::make_shared<ListSyntax>();
+
+				exp->m_List.push_back(lhs);
+
+				while (current().m_Type == Token::Seperator) {
+					next();
+
+					auto e = parseExpression(detail - 1);
+
+					exp->m_List.push_back(e);
+				}
+
+				return exp;
+			}
+			else {
+				return lhs;
+			}
+
+		}
+
+		else {
+			return parseExpression(detail - 1);
+		}
+
+		//This should NEVER happen
+		assert(false);
 
 		return nullptr;
+	}
+
+	std::shared_ptr<ExpressionSyntax> Parser::parseExpressionSimple()
+	{
+		if (current().m_Type == Token::Identifier) {
+			auto exp = std::make_shared<IdentifierSyntax>();
+			exp->m_Token = current();
+			exp->m_Name = current().m_Data;
+
+			// Consume the name
+			next();
+
+			return exp;
+		}
+		else if (current().m_Type == Token::LiteralString) {
+			auto exp = std::make_shared<LiteralSyntax>();
+			exp->m_Token = current();
+			exp->m_Data = current().m_Data;
+			exp->m_Type = LiteralSyntax::String;
+			next();
+			return exp;
+		}
+		else if (current().m_Type == Token::LiteralInteger) {
+			auto exp = std::make_shared<LiteralSyntax>();
+			exp->m_Token = current();
+			exp->m_Data = current().m_Data;
+			exp->m_Type = LiteralSyntax::Integer;
+			next();
+			return exp;
+		}
+		else if (current().m_Type == Token::LiteralLong) {
+			auto exp = std::make_shared<LiteralSyntax>();
+			exp->m_Token = current();
+			exp->m_Data = current().m_Data;
+			exp->m_Type = LiteralSyntax::Long;
+			next();
+			return exp;
+		}
+		else if (current().m_Type == Token::LiteralDouble) {
+			auto exp = std::make_shared<LiteralSyntax>();
+			exp->m_Token = current();
+			exp->m_Data = current().m_Data;
+			exp->m_Type = LiteralSyntax::Double;
+			next();
+			return exp;
+		}
+		else if (current().m_Type == Token::LiteralFloat) {
+			auto exp = std::make_shared<LiteralSyntax>();
+			exp->m_Token = current();
+			exp->m_Data = current().m_Data;
+			exp->m_Type = LiteralSyntax::Float;
+			next();
+			return exp;
+		}
+		else {
+			// TODO I should really figure out whether or not I should consume the token when its unexpected.
+			// I probably should, because it can cause infinite loops if I don't.
+			unexpectedToken();
+			next();
+
+			return nullptr;
+		}
 	}
 
 	std::shared_ptr<BlockSyntax> Parser::parseBlock()

@@ -128,8 +128,9 @@
     <ClInclude Include="ast\NameAndTypeSyntax.h" />
     <ClInclude Include="ast\StatementSyntax.h" />
     <ClInclude Include="ast\TypeSyntax.h" />
+    <ClInclude Include="lang\Operator.h" />
     <ClInclude Include="lexer\Characters.h" />
-    <ClInclude Include="lexer\Language.h" />
+    <ClInclude Include="lang\Language.h" />
     <ClInclude Include="lexer\Lexer.h" />
     <ClInclude Include="logger\log.h" />
     <ClInclude Include="parser\Parser.h" />
@@ -137,7 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer\Characters.cpp" />
-    <ClCompile Include="lexer\Language.cpp" />
+    <ClCompile Include="lang\Language.cpp" />
     <ClCompile Include="lexer\Lexer.cpp" />
     <ClCompile Include="parser\Parser.cpp" />
     <ClCompile Include="program\main.cpp" />

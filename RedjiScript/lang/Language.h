@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Operator.h"
+
 namespace redji {
 
 	bool isWhitespace(char c);

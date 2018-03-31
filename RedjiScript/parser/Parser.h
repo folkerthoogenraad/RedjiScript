@@ -29,9 +29,11 @@ namespace redji {
 		std::shared_ptr<BlockSyntax> parseAll();
 		std::shared_ptr<StatementSyntax> parseStatement();
 
-		std::shared_ptr<ExpressionSyntax> parseExpression();
 
 	protected:
+		std::shared_ptr<ExpressionSyntax> parseExpression(int detail = 7);
+		std::shared_ptr<ExpressionSyntax> parseExpressionSimple();
+
 		std::shared_ptr<BlockSyntax> parseBlock();
 		std::shared_ptr<FunctionSyntax> parseFunction(std::vector<Token> modifiers);
 
