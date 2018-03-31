@@ -5,19 +5,18 @@
 #include <memory>
 
 #include "StatementSyntax.h"
+#include "ExpressionSyntax.h"
 #include "NameAndTypeSyntax.h"
 #include "TypeSyntax.h"
 
 namespace redji {
 
-	class FunctionSyntax : public StatementSyntax {
+	class VariableSyntax : public StatementSyntax {
 	public:
 		std::string m_Name;
-		std::optional<TypeSyntax> m_ReturnType;
+		std::optional<TypeSyntax> m_Type;
 
-		std::vector<NameAndTypeSyntax> m_Parameters;
-
-		std::shared_ptr<StatementSyntax> m_Body;
+		std::shared_ptr<ExpressionSyntax> m_InitialValue;
 	};
 
 }

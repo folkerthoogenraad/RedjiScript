@@ -11,6 +11,7 @@
 #include "ast/NameAndTypeSyntax.h"
 #include "ast/TypeSyntax.h"
 #include "ast/BlockSyntax.h"
+#include "ast/VariableSyntax.h"
 #include "ast/ExpressionStatementSyntax.h"
 
 namespace redji {
@@ -36,6 +37,7 @@ namespace redji {
 
 		std::shared_ptr<BlockSyntax> parseBlock();
 		std::shared_ptr<FunctionSyntax> parseFunction(std::vector<Token> modifiers);
+		std::shared_ptr<VariableSyntax> parseVariable(std::vector<Token> modifiers);
 
 		TypeSyntax parseType();
 		NameAndTypeSyntax parseNameAndType();

@@ -128,6 +128,7 @@
     <ClInclude Include="ast\NameAndTypeSyntax.h" />
     <ClInclude Include="ast\StatementSyntax.h" />
     <ClInclude Include="ast\TypeSyntax.h" />
+    <ClInclude Include="ast\VariableSyntax.h" />
     <ClInclude Include="lang\Operator.h" />
     <ClInclude Include="lexer\Characters.h" />
     <ClInclude Include="lang\Language.h" />

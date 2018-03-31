@@ -1,8 +1,6 @@
 
-public function main(argc : int, argv : String) {
+function main() {
+	var test = "This is a test string"
 
-}
-
-public function harryPjotter(){
-	
+	println(test);
 }

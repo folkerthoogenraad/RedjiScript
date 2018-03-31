@@ -15,6 +15,7 @@
     <ClInclude Include="ast\ExpressionStatementSyntax.h" />
     <ClInclude Include="lang\Language.h" />
     <ClInclude Include="lang\Operator.h" />
+    <ClInclude Include="ast\VariableSyntax.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer\Characters.cpp" />

@@ -34,10 +34,8 @@ namespace redji {
 		while (current()) {
 			auto statement = parseStatement();
 
-			if (statement == nullptr)
-				break;
-
-			block->m_Statements.push_back(statement);
+			if (statement != nullptr)
+				block->m_Statements.push_back(statement);
 		}
 
 		return block;
@@ -58,6 +56,9 @@ namespace redji {
 			if (current().m_Type == Token::KeywordFunction) {
 				return parseFunction(modifiers);
 			}
+			else if (current().m_Type == Token::KeywordVariable) {
+				return parseVariable(modifiers);
+			}
 			else {
 				unexpectedToken();
 				next();
@@ -74,7 +75,8 @@ namespace redji {
 		}
 		else if (current().m_Type == Token::LineEnd) {
 			next();
-			return parseStatement();
+			// TODO create something like an "EmptyExpression" or something?
+			return nullptr; // parseStatement();
 		}
 
 		//Else, it basically always is an expression
@@ -436,7 +438,7 @@ namespace redji {
 			return nullptr;
 		}
 
-		auto function = std::make_shared<FunctionSyntax>();
+		std::shared_ptr<FunctionSyntax> function = std::make_shared<FunctionSyntax>();
 
 		if (next().m_Type != Token::Identifier) {
 			unexpectedToken(current(), Token::Identifier);
@@ -476,6 +478,41 @@ namespace redji {
 		function->m_Body = parseStatement();
 
 		return function;
+	}
+
+	std::shared_ptr<VariableSyntax> Parser::parseVariable(std::vector<Token> modifiers)
+	{
+		if (current().m_Type != Token::KeywordVariable) {
+			unexpectedToken(current(), Token::KeywordVariable);
+			return nullptr;
+		}
+
+		auto variable = std::make_shared<VariableSyntax>();
+
+		if (next().m_Type != Token::Identifier) {
+			unexpectedToken(current(), Token::Identifier);
+			return nullptr;
+		}
+
+		// Parse the name
+		variable->m_Name = current().m_Data;
+
+		next();
+
+		if (current().m_Type == Token::Colon) {
+			// Explicit type
+			next(); // Consume the color
+			variable->m_Type = parseType();
+		}
+
+
+		if (current().m_Type == Token::OperatorEquals) {
+			// initial value
+			next(); // Consume the operator
+			variable->m_InitialValue = parseExpression(); // TODO detail level should quit be 7, because of multiple shit (var a,b,c = (3,1,5) );
+		}
+
+		return variable;
 	}
 
 	TypeSyntax Parser::parseType()

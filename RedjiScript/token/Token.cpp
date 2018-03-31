@@ -7,7 +7,8 @@ namespace redji {
 
 	std::ostream & operator<<(std::ostream & o, const Token & t)
 	{
-		return o << "(" << std::setw(16) << t.m_Type << " - " << std::setw(4) << t.m_Line << ":" << std::setw(3) << t.m_Character << ") " << t.m_Data;
+		return o << t.m_Type << "(" << t.m_Line << ":" << t.m_Character << ", \"" << t.m_Data << "\")";
+		//return o << "(" << std::setw(16) << t.m_Type << " - " << std::setw(4) << t.m_Line << ":" << std::setw(3) << t.m_Character << ") " << t.m_Data;
 	}
 
 	std::ostream & operator<<(std::ostream & o, const Token::Type & token)

@@ -35,6 +35,7 @@ namespace redji {
 		//End of stream
 		if (!m_Chars.current()) {
 			m_Current.m_Type = Token::EndOfFile;
+			m_Current.m_Data = "EOF";
 			return m_Current;
 		}
 		char c = m_Chars.current();
