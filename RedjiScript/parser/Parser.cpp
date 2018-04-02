@@ -59,6 +59,19 @@ namespace redji {
 			else if (current().m_Type == Token::KeywordVariable) {
 				return parseVariable(modifiers);
 			}
+			else if (current().m_Type == Token::KeywordClass || current().m_Type == Token::KeywordStruct) {
+				return parseClass(modifiers);
+			}
+			else if (current().m_Type == Token::KeywordReturn) {
+				auto returnStatement = std::make_shared<ReturnSyntax>();
+				returnStatement->m_Token = current();
+				
+				next(); // Consume the return statement
+
+				returnStatement->m_Body = parseExpression();
+
+				return returnStatement;
+			}
 			else {
 				unexpectedToken();
 				next();
@@ -73,7 +86,7 @@ namespace redji {
 		if (current().m_Type == Token::OpenCurly) {
 			return parseBlock();
 		}
-		else if (current().m_Type == Token::LineEnd) {
+		else if (current().m_Type == Token::LineEnd) { // This is actually quite ugly way to handle stuff. Probably should not be handled like this.
 			next();
 			// TODO create something like an "EmptyExpression" or something?
 			return nullptr; // parseStatement();
@@ -142,7 +155,7 @@ namespace redji {
 		else if (detail == 2) {
 			auto lhs = parseExpression(detail - 1);
 
-			while (current().m_Type == Token::OperatorLookup || current().m_Type == Token::OpenBracket) {
+			while (current().m_Type == Token::OperatorLookup || current().m_Type == Token::OpenBracket || current().m_Type == Token::OperatorCompareLess) {
 
 				if (current().m_Type == Token::OperatorLookup) {
 					auto exp = std::make_shared<LookupSyntax>();
@@ -169,6 +182,29 @@ namespace redji {
 						if (current().m_Type != Token::CloseBracket) {
 							unexpectedToken();
 						}
+					}
+
+					//Consume the closing bracket
+					next();
+
+					lhs = exp;
+				}
+				else if (current().m_Type == Token::OperatorCompareLess) {
+					auto exp = std::make_shared<GenericInitializeExpression>();
+
+					exp->m_Lhs = lhs;
+					exp->m_Token = current();
+
+
+					do {
+						next();
+
+						exp->m_GenericTypes.push_back(parseType());
+
+					} while (current().m_Type == Token::Seperator);
+
+					if (current().m_Type != Token::OperatorCompareGreater) {
+						unexpectedToken();
 					}
 
 					//Consume the closing bracket
@@ -431,6 +467,44 @@ namespace redji {
 		return block;
 	}
 
+	std::shared_ptr<ClassSyntax> Parser::parseClass(std::vector<Token> modifiers)
+	{
+		if (!(current().m_Type == Token::KeywordClass || current().m_Type == Token::KeywordStruct)) {
+			unexpectedToken(current(), { Token::KeywordClass, Token::KeywordStruct} );
+			return nullptr;
+		}
+
+		auto cls = std::make_shared<ClassSyntax>();
+
+		cls->m_Type = ClassSyntax::Class;
+
+		if(current().m_Type == Token::KeywordStruct)
+			cls->m_Type = ClassSyntax::Struct;
+
+		// Consume the keyword
+		next();
+
+
+		// Parse the correct name
+		cls->m_Name = parseTypeName();
+
+		if (current().m_Type == Token::KeywordExtends || current().m_Type == Token::Colon) {
+
+			do {
+				// Consume the seperator
+				next();
+
+				cls->m_Superclasses.push_back(parseType());
+			} while (current().m_Type == Token::Seperator);
+		}
+
+		// Parse the body of code
+		cls->m_Body = parseStatement();
+
+		// Return ti
+		return cls;
+	}
+
 	std::shared_ptr<FunctionSyntax> Parser::parseFunction(std::vector<Token> modifiers)
 	{
 		if (current().m_Type != Token::KeywordFunction) {
@@ -440,21 +514,22 @@ namespace redji {
 
 		std::shared_ptr<FunctionSyntax> function = std::make_shared<FunctionSyntax>();
 
-		if (next().m_Type != Token::Identifier) {
-			unexpectedToken(current(), Token::Identifier);
-			return nullptr;
-		}
+		next();
 
 		// Parse the name
-		function->m_Name = current().m_Data;
+		function->m_Name = parseTypeName();
 
-		if (next().m_Type != Token::OpenBracket) {
+		// Check if the function definition is even correctly formatted
+		if (current().m_Type != Token::OpenBracket) {
 			unexpectedToken(current(), Token::OpenBracket);
 			return nullptr;
 		}
-		
+
+		// Consume the (
+		next();
+
 		// Parse the parameters
-		if (next().m_Type != Token::CloseBracket) {
+		if (current().m_Type != Token::CloseBracket) {
 			function->m_Parameters = parseNameAndTypeList();
 		}
 
@@ -520,16 +595,108 @@ namespace redji {
 		TypeSyntax type;
 
 		// TODO create actual type parsing
-
 		if (current().m_Type != Token::Identifier) {
 			unexpectedToken(current(), Token::Identifier);
 			return type;
 		}
 
+		type.m_Token = current();
 		type.m_Name = current().m_Data;
 
 		// Consume the identifier
 		next();
+
+		// The parsing of the generics
+		if (current().m_Type == Token::OperatorCompareLess) {
+
+			do {
+				// Consume the seperator (or operatorcompareless) and check ID
+				next();
+				type.m_Generics.push_back(parseType());
+
+			} while (current().m_Type == Token::Seperator);
+
+			// Consume the seperator (or operatorcompareless) and check ID
+			if (current().m_Type != Token::OperatorCompareGreater) {
+				unexpectedToken(current(), Token::OperatorCompareGreater);
+				// TODO continue anyway?
+			}
+
+			// Consume greater than operator
+			next();
+		}
+
+		// Parse all the arrays
+		while (current().m_Type == Token::OpenSquare){
+			// Consume the OpenSquare
+			next();
+
+			TypeSyntax::Array array;
+
+			array.type = TypeSyntax::Array::Heap;
+			
+			// If this is a stack array
+			if (current().m_Type == Token::LiteralInteger) {
+				array.type = TypeSyntax::Array::Stack;
+				array.size = std::stoi(current().m_Data);
+				next();
+			}
+
+			if (current().m_Type != Token::CloseSquare) {
+				unexpectedToken(current(), Token::OperatorCompareGreater);
+				// TODO continue anyway?
+			}
+
+			// Consume the square close
+			next();
+
+			// Add the parsed array to the type
+			type.m_Arrays.push_back(array);
+		}
+
+		return type;
+	}
+
+	TypeNameSyntax Parser::parseTypeName()
+	{
+		TypeNameSyntax type;
+
+		// First the name
+		if (current().m_Type != Token::Identifier) {
+			unexpectedToken(current(), Token::Identifier);
+			return type;
+		}
+
+		// Set the name
+		type.m_Token = current();
+		type.m_Name = current().m_Data;
+
+		next(); // Consume the ID
+
+		// The parsing of the generic names
+		if (current().m_Type == Token::OperatorCompareLess) {
+			
+			do {
+				// Consume the seperator (or operatorcompareless) and check ID
+				if (next().m_Type != Token::Identifier) {
+					unexpectedToken(current(), Token::Identifier);
+					return type;
+				}
+
+				type.m_GenericNames.push_back(current().m_Data);
+
+				next(); // Consume the ID
+			} while (current().m_Type == Token::Seperator);
+
+			// Consume the seperator (or operatorcompareless) and check ID
+			if (current().m_Type != Token::OperatorCompareGreater) {
+				unexpectedToken(current(), Token::OperatorCompareGreater);
+				// TODO continue anyway?
+			}
+
+			// Consume greater than operator
+			next();
+		}
 
 		return type;
 	}

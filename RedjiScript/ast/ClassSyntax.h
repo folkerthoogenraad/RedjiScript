@@ -1,22 +1,23 @@
 #pragma once
 
-#include <optional>
-#include <string>
+#include <vector>
 #include <memory>
 
 #include "StatementSyntax.h"
-#include "NameAndTypeSyntax.h"
 #include "TypeSyntax.h"
 #include "TypeNameSyntax.h"
 
 namespace redji {
 
-	class FunctionSyntax : public StatementSyntax {
+	class ClassSyntax : public StatementSyntax {
 	public:
-		TypeNameSyntax m_Name;
-		std::optional<TypeSyntax> m_ReturnType;
+		enum {
+			Struct, Class
+		} m_Type;
 
-		std::vector<NameAndTypeSyntax> m_Parameters;
+		TypeNameSyntax m_Name;
+
+		std::vector<TypeSyntax> m_Superclasses;
 
 		std::shared_ptr<StatementSyntax> m_Body;
 	};

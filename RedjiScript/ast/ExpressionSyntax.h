@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "lang/Operator.h"
+#include "TypeSyntax.h"
 
 namespace redji {
 
@@ -18,6 +18,12 @@ namespace redji {
 	public:
 		std::shared_ptr<ExpressionSyntax> m_Lhs;
 		std::shared_ptr<ExpressionSyntax> m_Rhs; // List or single argument
+	};
+
+	class GenericInitializeExpression : public ExpressionSyntax {
+	public:
+		std::shared_ptr<ExpressionSyntax> m_Lhs;
+		std::vector<TypeSyntax> m_GenericTypes;
 	};
 
 	class InvokeSyntax : public ExpressionSyntax {

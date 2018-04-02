@@ -12,7 +12,10 @@
 #include "ast/TypeSyntax.h"
 #include "ast/BlockSyntax.h"
 #include "ast/VariableSyntax.h"
+#include "ast/TypeNameSyntax.h"
 #include "ast/ExpressionStatementSyntax.h"
+#include "ast/ReturnSyntax.h"
+#include "ast/ClassSyntax.h"
 
 namespace redji {
 
@@ -26,20 +29,19 @@ namespace redji {
 		const Token &current();
 		const Token &next();
 		
-
 		std::shared_ptr<BlockSyntax> parseAll();
 		std::shared_ptr<StatementSyntax> parseStatement();
-
-
 	protected:
 		std::shared_ptr<ExpressionSyntax> parseExpression(int detail = 7);
 		std::shared_ptr<ExpressionSyntax> parseExpressionSimple();
 
 		std::shared_ptr<BlockSyntax> parseBlock();
+		std::shared_ptr<ClassSyntax> parseClass(std::vector<Token> modifiers);
 		std::shared_ptr<FunctionSyntax> parseFunction(std::vector<Token> modifiers);
 		std::shared_ptr<VariableSyntax> parseVariable(std::vector<Token> modifiers);
 
 		TypeSyntax parseType();
+		TypeNameSyntax parseTypeName();
 		NameAndTypeSyntax parseNameAndType();
 		std::vector<NameAndTypeSyntax> parseNameAndTypeList();
 		

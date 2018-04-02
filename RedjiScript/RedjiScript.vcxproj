@@ -122,11 +122,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ast\BlockSyntax.h" />
+    <ClInclude Include="ast\ClassSyntax.h" />
     <ClInclude Include="ast\ExpressionStatementSyntax.h" />
     <ClInclude Include="ast\ExpressionSyntax.h" />
     <ClInclude Include="ast\FunctionSyntax.h" />
     <ClInclude Include="ast\NameAndTypeSyntax.h" />
+    <ClInclude Include="ast\ReturnSyntax.h" />
     <ClInclude Include="ast\StatementSyntax.h" />
+    <ClInclude Include="ast\TypeNameSyntax.h" />
     <ClInclude Include="ast\TypeSyntax.h" />
     <ClInclude Include="ast\VariableSyntax.h" />
     <ClInclude Include="lang\Operator.h" />
