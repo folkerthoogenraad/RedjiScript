@@ -27,12 +27,17 @@ namespace redji {
 		return current();
 	}
 
-	std::shared_ptr<BlockSyntax> Parser::parseAll()
+	std::shared_ptr<CompilationUnit> Parser::parseAll()
 	{
-		std::shared_ptr<BlockSyntax> block = std::make_shared<BlockSyntax>();
+		std::shared_ptr<CompilationUnit> block = std::make_shared<CompilationUnit>();
 
 		while (current()) {
 			auto statement = parseStatement();
+
+			if (std::dynamic_pointer_cast<ExpressionStatementSyntax>(statement) != nullptr) {
+				LOG("Can't add normal expressions in compilation unit");
+				continue;
+			}
 
 			if (statement != nullptr)
 				block->m_Statements.push_back(statement);
@@ -57,10 +62,10 @@ namespace redji {
 				return parseFunction(modifiers);
 			}
 			else if (current().m_Type == Token::KeywordVariable) {
-				return parseVariable(modifiers);
+				return parseLocal(modifiers);
 			}
 			else if (current().m_Type == Token::KeywordClass || current().m_Type == Token::KeywordStruct) {
-				return parseClass(modifiers);
+				return parseStruct(modifiers);
 			}
 			else if (current().m_Type == Token::KeywordReturn) {
 				auto returnStatement = std::make_shared<ReturnSyntax>();
@@ -454,6 +459,10 @@ namespace redji {
 				break;
 
 			block->m_Statements.push_back(statement);
+
+			// Remove lineends
+			while(current().m_Type == Token::LineEnd)
+				next();
 		}
 
 		if (current().m_Type != Token::CloseCurly) {
@@ -467,7 +476,7 @@ namespace redji {
 		return block;
 	}
 
-	std::shared_ptr<ClassSyntax> Parser::parseClass(std::vector<Token> modifiers)
+	std::shared_ptr<ClassSyntax> Parser::parseStruct(std::vector<Token> modifiers)
 	{
 		if (!(current().m_Type == Token::KeywordClass || current().m_Type == Token::KeywordStruct)) {
 			unexpectedToken(current(), { Token::KeywordClass, Token::KeywordStruct} );
@@ -488,18 +497,39 @@ namespace redji {
 		// Parse the correct name
 		cls->m_Name = parseTypeName();
 
-		if (current().m_Type == Token::KeywordExtends || current().m_Type == Token::Colon) {
-
-			do {
-				// Consume the seperator
-				next();
-
-				cls->m_Superclasses.push_back(parseType());
-			} while (current().m_Type == Token::Seperator);
+		if (current().m_Type != Token::OpenCurly) {
+			unexpectedToken(current(), Token::OpenCurly);
+			return nullptr;
 		}
 
-		// Parse the body of code
-		cls->m_Body = parseStatement();
+		// Consume the open curly
+		next();
+
+		while (current().m_Type != Token::CloseCurly) {
+			// If end of file, break this loop
+			if (current().m_Type == Token::EndOfFile) {
+				unexpectedToken(current(), Token::CloseCurly);
+				return nullptr;
+			}
+
+			// Ignore line ends
+			if (current().m_Type == Token::LineEnd) {
+				next();
+				continue;
+			}
+
+			auto member = parseMember();
+
+			if (member == nullptr) {
+				unexpectedToken(current(), Token::Identifier);
+				continue;
+			}
+
+			cls->m_Members.push_back(member);
+		}
+
+		// consume close curly
+		next();
 
 		// Return ti
 		return cls;
@@ -555,14 +585,14 @@ namespace redji {
 		return function;
 	}
 
-	std::shared_ptr<VariableSyntax> Parser::parseVariable(std::vector<Token> modifiers)
+	std::shared_ptr<LocalSyntax> Parser::parseLocal(std::vector<Token> modifiers)
 	{
 		if (current().m_Type != Token::KeywordVariable) {
 			unexpectedToken(current(), Token::KeywordVariable);
 			return nullptr;
 		}
 
-		auto variable = std::make_shared<VariableSyntax>();
+		auto variable = std::make_shared<LocalSyntax>();
 
 		if (next().m_Type != Token::Identifier) {
 			unexpectedToken(current(), Token::Identifier);
@@ -590,9 +620,37 @@ namespace redji {
 		return variable;
 	}
 
-	TypeSyntax Parser::parseType()
+	std::shared_ptr<MemberSyntax> Parser::parseMember()
 	{
-		TypeSyntax type;
+		auto ptr = std::make_shared<MemberSyntax>();
+
+		// Make sure its an identifier
+		if (current().m_Type != Token::Identifier) {	
+			unexpectedToken(current(), Token::Identifier);
+			return nullptr;
+		}
+
+		ptr->m_Name = current().m_Data;
+
+		// Consuem the name
+		next();
+		
+		// Check if :
+		if (current().m_Type != Token::Colon) {
+			unexpectedToken(current(), Token::Colon);
+			return nullptr;
+		}
+
+		// Consume the :
+		next();
+
+		ptr->m_Type = parseType();
+		return ptr;
+	}
+
+	std::shared_ptr<TypeSyntax> Parser::parseType()
+	{
+		auto type = std::make_shared<TypeSyntax>();
 
 		// TODO create actual type parsing
 		if (current().m_Type != Token::Identifier) {
@@ -600,8 +658,8 @@ namespace redji {
 			return type;
 		}
 
-		type.m_Token = current();
-		type.m_Name = current().m_Data;
+		type->m_Token = current();
+		type->m_Name = current().m_Data;
 
 		// Consume the identifier
 		next();
@@ -612,7 +670,7 @@ namespace redji {
 			do {
 				// Consume the seperator (or operatorcompareless) and check ID
 				next();
-				type.m_Generics.push_back(parseType());
+				type->m_Generics.push_back(parseType());
 
 			} while (current().m_Type == Token::Seperator);
 
@@ -651,7 +709,7 @@ namespace redji {
 			next();
 
 			// Add the parsed array to the type
-			type.m_Arrays.push_back(array);
+			type->m_Arrays.push_back(array);
 		}
 
 		return type;

@@ -4,10 +4,11 @@
 #include <vector>
 
 #include "TypeSyntax.h"
+#include "SyntaxNode.h"
 
 namespace redji {
 
-	class ExpressionSyntax {
+	class ExpressionSyntax : public SyntaxNode{
 	public:
 		Token m_Token;
 
@@ -23,7 +24,7 @@ namespace redji {
 	class GenericInitializeExpression : public ExpressionSyntax {
 	public:
 		std::shared_ptr<ExpressionSyntax> m_Lhs;
-		std::vector<TypeSyntax> m_GenericTypes;
+		std::vector<std::shared_ptr<TypeSyntax>> m_GenericTypes;
 	};
 
 	class InvokeSyntax : public ExpressionSyntax {

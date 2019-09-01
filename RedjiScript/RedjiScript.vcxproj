@@ -123,15 +123,18 @@
   <ItemGroup>
     <ClInclude Include="ast\BlockSyntax.h" />
     <ClInclude Include="ast\ClassSyntax.h" />
+    <ClInclude Include="ast\CompilationUnit.h" />
     <ClInclude Include="ast\ExpressionStatementSyntax.h" />
     <ClInclude Include="ast\ExpressionSyntax.h" />
     <ClInclude Include="ast\FunctionSyntax.h" />
+    <ClInclude Include="ast\MemberSyntax.h" />
     <ClInclude Include="ast\NameAndTypeSyntax.h" />
     <ClInclude Include="ast\ReturnSyntax.h" />
     <ClInclude Include="ast\StatementSyntax.h" />
+    <ClInclude Include="ast\SyntaxNode.h" />
     <ClInclude Include="ast\TypeNameSyntax.h" />
     <ClInclude Include="ast\TypeSyntax.h" />
-    <ClInclude Include="ast\VariableSyntax.h" />
+    <ClInclude Include="ast\LocalSyntax.h" />
     <ClInclude Include="lang\Operator.h" />
     <ClInclude Include="lexer\Characters.h" />
     <ClInclude Include="lang\Language.h" />
@@ -139,6 +142,9 @@
     <ClInclude Include="logger\log.h" />
     <ClInclude Include="parser\Parser.h" />
     <ClInclude Include="token\Token.h" />
+    <ClInclude Include="types\Symbol.h" />
+    <ClInclude Include="types\SymbolTable.h" />
+    <ClInclude Include="types\Type.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer\Characters.cpp" />
@@ -147,6 +153,8 @@
     <ClCompile Include="parser\Parser.cpp" />
     <ClCompile Include="program\main.cpp" />
     <ClCompile Include="token\Token.cpp" />
+    <ClCompile Include="types\SymbolTable.cpp" />
+    <ClCompile Include="types\Type.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
