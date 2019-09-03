@@ -16,8 +16,11 @@ namespace redji {
 
 	class LookupSyntax : public ExpressionSyntax {
 	public:
-		std::shared_ptr<ExpressionSyntax> m_Lhs;
-		std::shared_ptr<ExpressionSyntax> m_Rhs; // List or single argument
+		std::shared_ptr<ExpressionSyntax> m_Instance;
+
+		// TODO this should be just a string, because this you can't do harry.(gerrit.hans), only (harry.gerrit).hans
+		// std::shared_ptr<ExpressionSyntax> m_Rhs; 
+		std::string m_Name;
 	};
 
 	class GenericInitializeExpression : public ExpressionSyntax {
@@ -28,8 +31,9 @@ namespace redji {
 
 	class InvokeSyntax : public ExpressionSyntax {
 	public:
-		std::shared_ptr<ExpressionSyntax> m_Lhs;
-		std::shared_ptr<ExpressionSyntax> m_Arguments; // List or single argument
+		std::shared_ptr<ExpressionSyntax> m_Lhs;		// Object to invoke on
+		std::optional<std::string> m_Name;				// Name of the function
+		std::shared_ptr<ExpressionSyntax> m_Arguments;	// List or single argument
 	};
 
 	class PrefixOperatorSyntax : public ExpressionSyntax {

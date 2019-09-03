@@ -123,5 +123,7 @@ void compileFile(const std::string &fileName) {
 	Parser parser(result);
 
 	auto parsedUnit = parser.parseAll();
+
+	LOG(parsedUnit);
 }
 

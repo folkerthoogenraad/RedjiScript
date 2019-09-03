@@ -155,21 +155,36 @@ namespace redji {
 		else if (detail == 2) {
 			auto lhs = parseExpression(detail - 1);
 
-			while (current().m_Type == Token::OperatorLookup || current().m_Type == Token::OpenBracket || current().m_Type == Token::OperatorCompareLess) {
+			while (current().m_Type == Token::OperatorLookup 
+				|| current().m_Type == Token::OpenBracket 
+				|| current().m_Type == Token::OperatorCompareLess) {
 
 				if (current().m_Type == Token::OperatorLookup) {
-					auto exp = std::make_shared<LookupSyntax>();
-					exp->m_Token = current();
+
 
 					next();
-					
-					auto rhs = parseExpression(detail - 1);
 
-					exp->m_Lhs = lhs;
-					exp->m_Rhs = rhs;
+					// If its an identifier
+					if (current().m_Type != Token::Identifier) {
+						unexpectedToken(current(), Token::Identifier);
+						return lhs;
+					}
 
+					auto instance = lhs;
+					std::string name = current().m_Data;
+
+					std::cout << name << " something" << std::endl;
+
+					// Consume the identifier
+					next();
+
+					auto exp = std::make_shared<LookupSyntax>();
+					exp->m_Instance = instance;
+					exp->m_Name = name;
 					lhs = exp;
+
 				}
+				// Invoking non member functions (invoking expressions and the like)
 				else if (current().m_Type == Token::OpenBracket) {
 					auto exp = std::make_shared<InvokeSyntax>();
 
@@ -189,6 +204,7 @@ namespace redji {
 
 					lhs = exp;
 				}
+				
 				else if (current().m_Type == Token::OperatorCompareLess) {
 					auto exp = std::make_shared<GenericInitializeExpression>();
 
