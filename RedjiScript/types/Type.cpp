@@ -7,8 +7,9 @@ namespace redji {
 			if (name == "float")
 				return BuiltinType::getFloat();
 			if (name == "int")
-				return BuiltinType::getFloat();
-
+				return BuiltinType::getInteger();
+			if (name == "void")
+				return BuiltinType::getVoid();
 			if (name == "string")
 				return BuiltinType::getString();
 
