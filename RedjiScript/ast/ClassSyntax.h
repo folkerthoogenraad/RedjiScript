@@ -6,6 +6,7 @@
 #include "StatementSyntax.h"
 #include "TypeSyntax.h"
 #include "TypeNameSyntax.h"
+#include "MemberSyntax.h"
 
 namespace redji {
 
@@ -17,9 +18,8 @@ namespace redji {
 
 		TypeNameSyntax m_Name;
 
-		std::vector<TypeSyntax> m_Superclasses;
+		std::vector<std::shared_ptr<MemberSyntax>> m_Members;
 
-		std::shared_ptr<StatementSyntax> m_Body;
 	};
 
 }

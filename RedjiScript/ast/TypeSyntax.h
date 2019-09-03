@@ -15,7 +15,7 @@ namespace redji {
 		};
 	public:
 		std::string m_Name;						// E.x. hans, trudy, gerrit
-		std::vector<TypeSyntax> m_Generics;		// E.x. hans<int>, trudy<int, String>
+		std::vector<std::shared_ptr<TypeSyntax>> m_Generics;		// E.x. hans<int>, trudy<int, String>
 		std::vector<Array> m_Arrays;			// E.x. hans[][], gerrit[3]
 	};
 

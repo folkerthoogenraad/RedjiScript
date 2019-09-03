@@ -1,8 +1,8 @@
 #pragma once
 
-#include <optional>
 #include <string>
 #include <memory>
+#include <optional>
 
 #include "StatementSyntax.h"
 #include "ExpressionSyntax.h"
@@ -11,11 +11,14 @@
 
 namespace redji {
 
-	class VariableSyntax : public StatementSyntax {
+	class MemberSyntax : public StatementSyntax {
 	public:
 		std::string m_Name;
-		std::optional<TypeSyntax> m_Type;
 
+		// Can become an optional sometime
+		std::shared_ptr<TypeSyntax> m_Type;
+		
+		// Not yet implemented.
 		std::shared_ptr<ExpressionSyntax> m_InitialValue;
 	};
 

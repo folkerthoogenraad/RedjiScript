@@ -14,7 +14,7 @@ namespace redji {
 	class FunctionSyntax : public StatementSyntax {
 	public:
 		TypeNameSyntax m_Name;
-		std::optional<TypeSyntax> m_ReturnType;
+		std::shared_ptr<TypeSyntax> m_ReturnType;
 
 		std::vector<NameAndTypeSyntax> m_Parameters;
 

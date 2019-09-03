@@ -1,8 +1,11 @@
 #pragma once
 
+#include "token/Token.h"
+#include "SyntaxNode.h"
+
 namespace redji {
 
-	class StatementSyntax {
+	class StatementSyntax : public SyntaxNode{
 	public:
 		Token m_Token;
 

@@ -7,7 +7,7 @@
 
 namespace redji {
 
-	class BlockSyntax : public StatementSyntax{
+	class CompilationUnit : public StatementSyntax {
 	public:
 		std::vector<std::shared_ptr<StatementSyntax>> m_Statements;
 	};

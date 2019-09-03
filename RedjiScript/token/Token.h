@@ -22,6 +22,7 @@ namespace redji {
 			ModifierPrivate,	// private
 			ModifierStatic,	// static
 			ModifierLocal,		// local
+			ModifierExtern,		// extern
 
 			KeywordReturn,		// return
 			KeywordIn,			// in

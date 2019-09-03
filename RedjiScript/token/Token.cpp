@@ -258,6 +258,7 @@ namespace redji {
 	{ Token::Type::ModifierPrivate, "private" },
 	{ Token::Type::ModifierStatic, "static" },
 	{ Token::Type::ModifierLocal, "local" },
+	{ Token::Type::ModifierLocal, "extern" },
 	};
 
 	const std::vector<std::pair<Token::Type, std::string>> keywordOperatorTypes = {
