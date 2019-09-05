@@ -11,7 +11,7 @@
 #include <queue>
 #include <memory>
 
-#include "types/Type.h"
+#include "types/Symbol.h"
 
 
 void lexFile(const std::string &file);
@@ -132,83 +132,8 @@ void compileFile(const std::string &fileName) {
 
 	auto parsedUnit = parser.parseAll();
 
-	{
-		using namespace compiled;
+	SymbolTable table;
 
-		auto globalNamespace = std::make_shared<Namespace>("");
-
-		std::queue<std::shared_ptr<CustomType>> types;
-
-		// First look at all the classes
-		// Register the available classes
-		for (auto stm : parsedUnit->m_Statements) {
-			auto cls = std::dynamic_pointer_cast<ClassSyntax>(stm);
-
-			if (cls == nullptr)
-				continue;
-
-			auto type = std::make_shared<CustomType>();
-
-			type->m_Name = cls->m_Name.m_Name;
-			type->m_Definition = cls;
-
-			types.push(type);
-
-			globalNamespace->addType(type);
-		}
-
-		// Set the type for members of types
-		while (!types.empty()) {
-			auto type = types.front();
-			types.pop();
-
-			auto cls = type->m_Definition;
-
-			for (auto m : cls->m_Members) {
-				auto member = std::make_shared<NameAndType>();
-
-				member->m_Name = m->m_Name;
-				member->m_Type = globalNamespace->findTypeByName(m->m_Type->m_Name);
-
-				type->m_Members.push_back(member);
-			}
-		}
-
-		// Look at functions next
-		for (auto stm : parsedUnit->m_Statements) {
-			auto fn = std::dynamic_pointer_cast<FunctionSyntax>(stm);
-
-			if (fn == nullptr)
-				continue;
-
-			auto function = std::make_shared<Function>();
-
-			// Get the name
-			function->m_Name = fn->m_Name.m_Name;
-			
-			// Get the return type
-			if (fn->m_ReturnType != nullptr) {
-				function->m_ReturnType = globalNamespace->findTypeByName(fn->m_ReturnType->m_Name);
-			}
-			else {
-				function->m_ReturnType = BuiltinType::getVoid();
-			}
-
-			// Get the parameters
-			for (auto& p : fn->m_Parameters) {
-				auto parameter = std::make_shared<NameAndType>();
-
-				parameter->m_Name = p.m_Name;
-				parameter->m_Type = globalNamespace->findTypeByName(p.m_Type->m_Name);
-			
-				function->m_Parameters.push_back(parameter);
-			}
-
-			globalNamespace->addFunction(function);
-		}
-
-		LOG(parsedUnit);
-	}
-
+	table.process(parsedUnit);
 }
 

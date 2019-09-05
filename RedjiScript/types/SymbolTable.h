@@ -6,20 +6,18 @@
 
 #include "Symbol.h"
 
-#include "ast/BlockSyntax.h"
+#include "ast/AST.h"
 
 namespace redji {
 
 	class SymbolTable {
-		std::map<std::shared_ptr<SyntaxNode>, std::shared_ptr<Symbol>> m_Symbols;
-
-		SymbolTable *m_Parent;
-		std::vector<std::shared_ptr<SymbolTable>> m_Children;
+		std::shared_ptr<NamespaceSymbol> m_RootNamespace;
 	public:
-		SymbolTable(std::shared_ptr<BlockSyntax> generator);
+		SymbolTable();
 
-		void insert(std::shared_ptr<SyntaxNode> node, std::shared_ptr<Symbol> symbol);
+		void process(std::shared_ptr<CompilationUnit> unit);
+
 	private:
-		std::shared_ptr<ModuleSymbol> createModule(std::shared_ptr<BlockSyntax> generator);
+		std::shared_ptr<TypeSymbol> createTypeSyntax(std::shared_ptr<TypeSyntax> syntax);
 	};
 }

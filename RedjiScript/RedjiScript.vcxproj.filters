@@ -25,6 +25,7 @@
     <ClInclude Include="ast\SyntaxNode.h" />
     <ClInclude Include="ast\LocalSyntax.h" />
     <ClInclude Include="ast\CompilationUnit.h" />
+    <ClInclude Include="ast\AST.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer\Characters.cpp" />
@@ -35,5 +36,6 @@
     <ClCompile Include="lang\Language.cpp" />
     <ClCompile Include="types\SymbolTable.cpp" />
     <ClCompile Include="types\Type.cpp" />
+    <ClCompile Include="types\Symbol.cpp" />
   </ItemGroup>
 </Project>

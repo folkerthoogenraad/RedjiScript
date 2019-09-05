@@ -121,6 +121,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ast\AST.h" />
     <ClInclude Include="ast\BlockSyntax.h" />
     <ClInclude Include="ast\ClassSyntax.h" />
     <ClInclude Include="ast\CompilationUnit.h" />
@@ -153,6 +154,7 @@
     <ClCompile Include="parser\Parser.cpp" />
     <ClCompile Include="program\main.cpp" />
     <ClCompile Include="token\Token.cpp" />
+    <ClCompile Include="types\Symbol.cpp" />
     <ClCompile Include="types\SymbolTable.cpp" />
     <ClCompile Include="types\Type.cpp" />
   </ItemGroup>
