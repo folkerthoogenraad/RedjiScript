@@ -147,7 +147,10 @@ namespace redji {
 				//Consume )
 				next();
 
-				return exp;
+				auto bracket = std::make_shared<BracketSyntax>();
+				bracket->m_Expression = exp;
+
+				return bracket;
 			}
 			else {
 				return parseExpression(detail - 1);
@@ -166,12 +169,19 @@ namespace redji {
 					auto exp = std::make_shared<LookupSyntax>();
 					exp->m_Token = current();
 
+					// Consume the . token
 					next();
 					
-					auto rhs = parseExpression(detail - 1);
-
+					if (current().m_Type != Token::Identifier) {
+						unexpectedToken(current(), Token::Identifier);
+						return nullptr;
+					}
+					
+					exp->m_Name = current().m_Data;
 					exp->m_Lhs = lhs;
-					exp->m_Rhs = rhs;
+
+					// Consume the identifier
+					next();
 
 					lhs = exp;
 				}
@@ -181,11 +191,20 @@ namespace redji {
 					exp->m_Lhs = lhs;
 					exp->m_Token = current();
 
-					if (next().m_Type != Token::CloseBracket) {
-						auto rhs = parseExpression(); // Parse a full expression between these brackets
-						exp->m_Arguments = rhs;
-						if (current().m_Type != Token::CloseBracket) {
+					next();
+
+					// TODO check if this even works remotely
+					while (current().m_Type != Token::CloseBracket) {
+						auto rhs = parseExpression(6); // Parse a full expression between these brackets
+						exp->m_Arguments.push_back(rhs);
+
+						if (current().m_Type != Token::CloseBracket && current().m_Type != Token::Seperator) {
 							unexpectedToken();
+						}
+
+						// If its a seperator, consume it
+						if (current().m_Type == Token::Seperator) {
+							next();
 						}
 					}
 
@@ -195,7 +214,7 @@ namespace redji {
 					lhs = exp;
 				}
 				else if (current().m_Type == Token::OperatorCompareLess) {
-					auto exp = std::make_shared<GenericInitializeExpression>();
+					auto exp = std::make_shared<GenericInitializeSyntax>();
 
 					exp->m_Lhs = lhs;
 					exp->m_Token = current();
@@ -560,7 +579,7 @@ namespace redji {
 
 		// Parse the parameters
 		if (current().m_Type != Token::CloseBracket) {
-			function->m_Parameters = parseNameAndTypeList();
+			function->m_Parameters = parseParameterList();
 		}
 
 		if (current().m_Type != Token::CloseBracket) {
@@ -759,9 +778,9 @@ namespace redji {
 		return type;
 	}
 
-	NameAndTypeSyntax Parser::parseNameAndType()
+	ParameterSyntax Parser::parseParameter()
 	{
-		NameAndTypeSyntax nameAndType;
+		ParameterSyntax nameAndType;
 
 		if (current().m_Type != Token::Identifier) {
 			unexpectedToken(current(), Token::Identifier);
@@ -782,16 +801,16 @@ namespace redji {
 		return nameAndType;
 	}
 
-	std::vector<NameAndTypeSyntax> Parser::parseNameAndTypeList()
+	std::vector<ParameterSyntax> Parser::parseParameterList()
 	{
-		std::vector<NameAndTypeSyntax> list;
+		std::vector<ParameterSyntax> list;
 
 		// Add the first item
-		list.push_back(parseNameAndType());
+		list.push_back(parseParameter());
 
 		while (current().m_Type == Token::Seperator) {
 			next();
-			list.push_back(parseNameAndType());
+			list.push_back(parseParameter());
 		}
 
 		return std::move(list);

@@ -13,24 +13,37 @@ namespace redji {
 		Token m_Token;
 
 		virtual ~ExpressionSyntax() {};
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const { stream << "{ERROR}"; };
 	};
 
 	class LookupSyntax : public ExpressionSyntax {
 	public:
 		std::shared_ptr<ExpressionSyntax> m_Lhs;
-		std::shared_ptr<ExpressionSyntax> m_Rhs; // List or single argument
+		std::shared_ptr<ExpressionSyntax> m_Rhs_;
+		std::string m_Name;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
-	class GenericInitializeExpression : public ExpressionSyntax {
+	class GenericInitializeSyntax : public ExpressionSyntax {
 	public:
 		std::shared_ptr<ExpressionSyntax> m_Lhs;
 		std::vector<std::shared_ptr<TypeSyntax>> m_GenericTypes;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 	class InvokeSyntax : public ExpressionSyntax {
 	public:
 		std::shared_ptr<ExpressionSyntax> m_Lhs;
-		std::shared_ptr<ExpressionSyntax> m_Arguments; // List or single argument
+		std::vector<std::shared_ptr<ExpressionSyntax>> m_Arguments; // List or single argument
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 	class PrefixOperatorSyntax : public ExpressionSyntax {
@@ -42,6 +55,9 @@ namespace redji {
 		} m_Operator = Plus;
 
 		std::shared_ptr<ExpressionSyntax> m_Rhs;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 	class AssignmentSyntax : public ExpressionSyntax {
@@ -53,6 +69,9 @@ namespace redji {
 		} m_Type = Normal;
 
 		std::shared_ptr<ExpressionSyntax> m_Rhs;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 	class OperatorSyntax : public ExpressionSyntax {
@@ -62,16 +81,25 @@ namespace redji {
 			Add, Subtract, Multiply, Divide, Modulo
 		}m_Operator;
 		std::shared_ptr<ExpressionSyntax> m_Rhs;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 	class ListSyntax : public ExpressionSyntax {
 	public:
 		std::vector<std::shared_ptr<ExpressionSyntax>> m_List;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 	class IdentifierSyntax : public ExpressionSyntax{
 	public:
 		std::string m_Name;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 	class LiteralSyntax : public ExpressionSyntax {
@@ -86,6 +114,16 @@ namespace redji {
 		} m_Type = Unknown;
 
 		std::string m_Data;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
+	class BracketSyntax : public ExpressionSyntax {
+	public:
+		std::shared_ptr<ExpressionSyntax> m_Expression;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
+	};
 }

@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "StatementSyntax.h"
+
 namespace redji {
 
 	class TypeSyntax : public StatementSyntax{
@@ -17,6 +19,9 @@ namespace redji {
 		std::string m_Name;						// E.x. hans, trudy, gerrit
 		std::vector<std::shared_ptr<TypeSyntax>> m_Generics;		// E.x. hans<int>, trudy<int, String>
 		std::vector<Array> m_Arrays;			// E.x. hans[][], gerrit[3]
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 }

@@ -1,21 +1,15 @@
-struct Vector2{
-	x : float;
-	y : float;
-}
-
-struct Transform{
-	position : Vector2;
-	velocity : Vector2;
-}
-
 struct Player{
-	transform : Transform;
+	name : string;
 }
 
-function substring(str : string){
+function print(text : string){
 	
 }
 
 function init() -> int{
-	var p = Player();
+	var player : Player;
+	
+	print(player.name);
+	print("Pizza is zeker lekker");
 }
+

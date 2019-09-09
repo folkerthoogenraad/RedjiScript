@@ -16,10 +16,13 @@ namespace redji {
 			Struct, Class
 		} m_Type;
 
+		// This shoudl be a poiunter 
 		TypeNameSyntax m_Name;
 
 		std::vector<std::shared_ptr<MemberSyntax>> m_Members;
 
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 }

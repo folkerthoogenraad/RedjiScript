@@ -8,7 +8,7 @@
 
 #include "ast/StatementSyntax.h"
 #include "ast/FunctionSyntax.h"
-#include "ast/NameAndTypeSyntax.h"
+#include "ast/ParameterSyntax.h"
 #include "ast/TypeSyntax.h"
 #include "ast/BlockSyntax.h"
 #include "ast/LocalSyntax.h"
@@ -45,8 +45,8 @@ namespace redji {
 		std::shared_ptr<TypeSyntax> parseType();
 
 		TypeNameSyntax parseTypeName();
-		NameAndTypeSyntax parseNameAndType();
-		std::vector<NameAndTypeSyntax> parseNameAndTypeList();
+		ParameterSyntax parseParameter();
+		std::vector<ParameterSyntax> parseParameterList();
 		
 		void unexpectedToken() { unexpectedToken(current(), std::vector<Token::Type>()); }
 		void unexpectedToken(Token token) { unexpectedToken(token, std::vector<Token::Type>()); };

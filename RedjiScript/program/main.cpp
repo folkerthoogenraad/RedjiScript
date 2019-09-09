@@ -5,6 +5,7 @@
 #include "types/SymbolTable.h"
 
 #include "logger/log.h"
+#include "logger/Logger.h"
 
 #include <vector>
 #include <string>
@@ -13,6 +14,7 @@
 
 #include "types/Symbol.h"
 
+#include "generators/CPPGenerator.h"
 
 void lexFile(const std::string &file);
 void compileFile(const std::string &file);
@@ -129,11 +131,12 @@ void compileFile(const std::string &fileName) {
 	}
 
 	Parser parser(result);
-
 	auto parsedUnit = parser.parseAll();
 
 	SymbolTable table;
-
 	table.process(parsedUnit);
+
+	CPPGenerator cpp;
+	std::string s = cpp.generate(*parsedUnit);
 }
 

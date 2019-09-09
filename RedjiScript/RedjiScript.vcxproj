@@ -122,6 +122,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ast\AST.h" />
+    <ClInclude Include="ast\ASTDefines.h" />
     <ClInclude Include="ast\BlockSyntax.h" />
     <ClInclude Include="ast\ClassSyntax.h" />
     <ClInclude Include="ast\CompilationUnit.h" />
@@ -129,10 +130,11 @@
     <ClInclude Include="ast\ExpressionSyntax.h" />
     <ClInclude Include="ast\FunctionSyntax.h" />
     <ClInclude Include="ast\MemberSyntax.h" />
-    <ClInclude Include="ast\NameAndTypeSyntax.h" />
+    <ClInclude Include="ast\ParameterSyntax.h" />
     <ClInclude Include="ast\ReturnSyntax.h" />
     <ClInclude Include="ast\StatementSyntax.h" />
     <ClInclude Include="ast\SyntaxNode.h" />
+    <ClInclude Include="ast\SyntaxVisitor.h" />
     <ClInclude Include="ast\TypeNameSyntax.h" />
     <ClInclude Include="ast\TypeSyntax.h" />
     <ClInclude Include="ast\LocalSyntax.h" />
@@ -141,6 +143,7 @@
     <ClInclude Include="lang\Language.h" />
     <ClInclude Include="lexer\Lexer.h" />
     <ClInclude Include="logger\log.h" />
+    <ClInclude Include="logger\Logger.h" />
     <ClInclude Include="parser\Parser.h" />
     <ClInclude Include="token\Token.h" />
     <ClInclude Include="types\Symbol.h" />
@@ -148,6 +151,19 @@
     <ClInclude Include="types\Type.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ast\AST.cpp" />
+    <ClCompile Include="ast\BlockSyntax.cpp" />
+    <ClCompile Include="ast\ClassSyntax.cpp" />
+    <ClCompile Include="ast\CompilationUnit.cpp" />
+    <ClCompile Include="ast\ExpressionStatementSyntax.cpp" />
+    <ClCompile Include="ast\ExpressionSyntax.cpp" />
+    <ClCompile Include="ast\FunctionSyntax.cpp" />
+    <ClCompile Include="ast\LocalSyntax.cpp" />
+    <ClCompile Include="ast\MemberSyntax.cpp" />
+    <ClCompile Include="ast\ParameterSyntax.cpp" />
+    <ClCompile Include="ast\ReturnSyntax.cpp" />
+    <ClCompile Include="ast\TypeNameSyntax.cpp" />
+    <ClCompile Include="ast\TypeSyntax.cpp" />
     <ClCompile Include="lexer\Characters.cpp" />
     <ClCompile Include="lang\Language.cpp" />
     <ClCompile Include="lexer\Lexer.cpp" />

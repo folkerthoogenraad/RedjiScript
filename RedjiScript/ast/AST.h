@@ -8,9 +8,16 @@
 #include "FunctionSyntax.h"
 #include "LocalSyntax.h"
 #include "MemberSyntax.h"
-#include "NameAndTypeSyntax.h"
+#include "ParameterSyntax.h"
 #include "ReturnSyntax.h"
 #include "StatementSyntax.h"
 #include "SyntaxNode.h"
 #include "TypeNameSyntax.h"
 #include "TypeSyntax.h"
+
+#include <ostream>
+
+namespace redji {
+
+	std::ostream& operator<<(std::ostream& os, const SyntaxNode& dt);
+}

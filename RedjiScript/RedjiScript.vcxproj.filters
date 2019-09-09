@@ -8,7 +8,6 @@
     <ClInclude Include="parser\Parser.h" />
     <ClInclude Include="ast\FunctionSyntax.h" />
     <ClInclude Include="ast\StatementSyntax.h" />
-    <ClInclude Include="ast\NameAndTypeSyntax.h" />
     <ClInclude Include="ast\TypeSyntax.h" />
     <ClInclude Include="ast\BlockSyntax.h" />
     <ClInclude Include="ast\ExpressionSyntax.h" />
@@ -26,6 +25,10 @@
     <ClInclude Include="ast\LocalSyntax.h" />
     <ClInclude Include="ast\CompilationUnit.h" />
     <ClInclude Include="ast\AST.h" />
+    <ClInclude Include="logger\Logger.h" />
+    <ClInclude Include="ast\SyntaxVisitor.h" />
+    <ClInclude Include="ast\ASTDefines.h" />
+    <ClInclude Include="ast\ParameterSyntax.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer\Characters.cpp" />
@@ -37,5 +40,18 @@
     <ClCompile Include="types\SymbolTable.cpp" />
     <ClCompile Include="types\Type.cpp" />
     <ClCompile Include="types\Symbol.cpp" />
+    <ClCompile Include="ast\ExpressionSyntax.cpp" />
+    <ClCompile Include="ast\AST.cpp" />
+    <ClCompile Include="ast\TypeSyntax.cpp" />
+    <ClCompile Include="ast\TypeNameSyntax.cpp" />
+    <ClCompile Include="ast\ReturnSyntax.cpp" />
+    <ClCompile Include="ast\MemberSyntax.cpp" />
+    <ClCompile Include="ast\LocalSyntax.cpp" />
+    <ClCompile Include="ast\FunctionSyntax.cpp" />
+    <ClCompile Include="ast\ExpressionStatementSyntax.cpp" />
+    <ClCompile Include="ast\ClassSyntax.cpp" />
+    <ClCompile Include="ast\BlockSyntax.cpp" />
+    <ClCompile Include="ast\CompilationUnit.cpp" />
+    <ClCompile Include="ast\ParameterSyntax.cpp" />
   </ItemGroup>
 </Project>

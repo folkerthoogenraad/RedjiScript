@@ -6,7 +6,6 @@
 
 #include "StatementSyntax.h"
 #include "ExpressionSyntax.h"
-#include "NameAndTypeSyntax.h"
 #include "TypeSyntax.h"
 
 namespace redji {
@@ -20,6 +19,9 @@ namespace redji {
 		
 		// Not yet implemented.
 		std::shared_ptr<ExpressionSyntax> m_InitialValue;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
 	};
 
 }

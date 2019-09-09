@@ -1,5 +1,7 @@
 #include "Symbol.h"
 
+#include "logger/log.h"
+
 namespace redji {
 	void NamespaceSymbol::setName(std::string name)
 	{
@@ -49,6 +51,17 @@ namespace redji {
 		mem->m_Parent = this;
 		m_Members.push_back(mem);
 	}
+
+	std::shared_ptr<NamedTypeSymbol> ClassSymbol::findVariableByName(const std::string & name)
+	{
+		for (int i = 0; i < m_Members.size(); i++) {
+			if (m_Members[i]->m_Name == name)
+				return m_Members[i];
+		}
+
+		return nullptr;
+	}
+
 	void FunctionSymbol::setName(std::string name)
 	{
 		m_Name = name;
@@ -94,5 +107,76 @@ namespace redji {
 		static auto type = std::make_shared<BuiltinClassSymbol>(Integer);
 
 		return type;
+	}
+	std::shared_ptr<ClassSymbol> Symbol::findClassByName(const std::string & name)
+	{
+		return nullptr;
+	}
+	std::shared_ptr<NamedTypeSymbol> Symbol::findVariableByName(const std::string & name)
+	{
+		return nullptr;
+	}
+	std::vector<std::shared_ptr<FunctionSymbol>> Symbol::findFunctionsByName(const std::string & name)
+	{
+		return std::vector<std::shared_ptr<FunctionSymbol>>();
+	}
+	void Symbol::setParent(Symbol * symbol)
+	{
+		this->m_Parent = symbol;
+	}
+
+	void SymbolScope::setTypeOf(std::shared_ptr<ExpressionSyntax> syntax, std::shared_ptr<TypeSymbol> type)
+	{
+		if (m_Expressions.find(syntax) != m_Expressions.end()) {
+			LOG_ERROR("Reinserting same expression again.");
+		}
+		m_Expressions[syntax] = type;
+	}
+
+	std::shared_ptr<TypeSymbol> SymbolScope::findTypeOf(std::shared_ptr<ExpressionSyntax> syntax)
+	{
+		if (m_Expressions.find(syntax) == m_Expressions.end()) {
+			return nullptr;
+		}
+
+		return m_Expressions[syntax];
+	}
+
+	void SymbolScope::setParent(SymbolScope * scope)
+	{
+		m_Parent = scope;
+	}
+	std::shared_ptr<NamedTypeSymbol> SymbolScope::findDefinition(const std::string & name)
+	{
+		for (auto &i : m_Variables) {
+			if (i->m_Name == name)
+				return i;
+		}
+
+		if (m_Parent != nullptr)
+			return m_Parent->findDefinition(name);
+
+		return nullptr;
+	}
+
+	void SymbolScope::addDefinition(std::shared_ptr<NamedTypeSymbol> symbol)
+	{
+		if (findDefinition(symbol->m_Name) != nullptr)
+			LOG_ERROR("Duplicate definition of " << symbol->m_Name << ".");
+
+		m_Variables.push_back(symbol);
+	}
+
+	std::shared_ptr<SymbolScope> SymbolScope::createChildScope()
+	{
+		auto child = std::make_shared<SymbolScope>();
+		child->setParent(this);
+
+		m_Children.push_back(child);
+		return child;
+	}
+	bool TypeSymbol::equals(const TypeSymbol & other)
+	{
+		return m_Class == other.m_Class && m_Array == other.m_Array;
 	}
 }
