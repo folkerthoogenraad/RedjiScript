@@ -138,6 +138,7 @@
     <ClInclude Include="ast\TypeNameSyntax.h" />
     <ClInclude Include="ast\TypeSyntax.h" />
     <ClInclude Include="ast\LocalSyntax.h" />
+    <ClInclude Include="generators\CPPGenerator.h" />
     <ClInclude Include="lang\Operator.h" />
     <ClInclude Include="lexer\Characters.h" />
     <ClInclude Include="lang\Language.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="ast\ReturnSyntax.cpp" />
     <ClCompile Include="ast\TypeNameSyntax.cpp" />
     <ClCompile Include="ast\TypeSyntax.cpp" />
+    <ClCompile Include="generators\CPPGenerator.cpp" />
     <ClCompile Include="lexer\Characters.cpp" />
     <ClCompile Include="lang\Language.cpp" />
     <ClCompile Include="lexer\Lexer.cpp" />

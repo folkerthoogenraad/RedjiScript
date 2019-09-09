@@ -29,6 +29,7 @@
     <ClInclude Include="ast\SyntaxVisitor.h" />
     <ClInclude Include="ast\ASTDefines.h" />
     <ClInclude Include="ast\ParameterSyntax.h" />
+    <ClInclude Include="generators\CPPGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer\Characters.cpp" />
@@ -53,5 +54,6 @@
     <ClCompile Include="ast\BlockSyntax.cpp" />
     <ClCompile Include="ast\CompilationUnit.cpp" />
     <ClCompile Include="ast\ParameterSyntax.cpp" />
+    <ClCompile Include="generators\CPPGenerator.cpp" />
   </ItemGroup>
 </Project>
