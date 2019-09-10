@@ -102,6 +102,15 @@ namespace redji {
 
 		return type;
 	}
+	std::string BuiltinClassSymbol::getName()
+	{
+		switch (m_Type) {
+		case Integer: return "int";
+		case Float: return "float";
+		case String: return "string";
+		case Void: return "void";
+		}
+	}
 	std::shared_ptr<BuiltinClassSymbol> BuiltinClassSymbol::getInteger()
 	{
 		static auto type = std::make_shared<BuiltinClassSymbol>(Integer);
@@ -159,6 +168,16 @@ namespace redji {
 		return nullptr;
 	}
 
+	std::shared_ptr<SymbolScope> SymbolScope::findChild(BlockSyntax * block)
+	{
+		for (auto & c : m_Children) {
+			if (c->m_Definition.get() == block)
+				return c;
+		}
+
+		return nullptr;
+	}
+
 	void SymbolScope::addDefinition(std::shared_ptr<NamedTypeSymbol> symbol)
 	{
 		if (findDefinition(symbol->m_Name) != nullptr)
@@ -167,9 +186,10 @@ namespace redji {
 		m_Variables.push_back(symbol);
 	}
 
-	std::shared_ptr<SymbolScope> SymbolScope::createChildScope()
+	std::shared_ptr<SymbolScope> SymbolScope::createChildScope(std::shared_ptr<BlockSyntax> block)
 	{
 		auto child = std::make_shared<SymbolScope>();
+		child->m_Definition = block;
 		child->setParent(this);
 
 		m_Children.push_back(child);

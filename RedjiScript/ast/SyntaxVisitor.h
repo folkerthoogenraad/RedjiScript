@@ -7,36 +7,36 @@ namespace redji {
 	class SyntaxVisitor {
 	public:
 		// Default
-		void visit(SyntaxNode &node) { };
+		virtual void visit(SyntaxNode &node) { };
 
 		// File
-		void visit(CompilationUnit &node) { };
-		void visit(ClassSyntax &node) { };
-		void visit(FunctionSyntax &node) { };
-		void visit(MemberSyntax &node) { };
-		void visit(ParameterSyntax &node) { };
-		void visit(TypeNameSyntax &node) { };
-		void visit(TypeSyntax &node) { };
+		virtual void visit(CompilationUnit &node) { };
+		virtual void visit(ClassSyntax &node) { };
+		virtual void visit(FunctionSyntax &node) { };
+		virtual void visit(MemberSyntax &node) { };
+		virtual void visit(ParameterSyntax &node) { };
+		virtual void visit(TypeNameSyntax &node) { };
+		virtual void visit(TypeSyntax &node) { };
 
 		// Functions
-		void visit(LocalSyntax &node) { };
-		void visit(BlockSyntax &node) { };
-		void visit(StatmentSyntax &node) { };
-		void visit(ExpressionStatementSyntax &node) { };
-		void visit(ReturnSyntax &node) { };
+		virtual void visit(LocalSyntax &node) { };
+		virtual void visit(BlockSyntax &node) { };
+		virtual void visit(StatmentSyntax &node) { };
+		virtual void visit(ExpressionStatementSyntax &node) { };
+		virtual void visit(ReturnSyntax &node) { };
 
 		// Expressions
-		void visit(ExpressionSyntax &node) { };
-		void visit(LookupSyntax &node) { };
-		void visit(GenericInitializationSyntax &node) { };
-		void visit(InvokeSyntax &node) { };
-		void visit(PrefixOperatorSyntax &node) { };
-		void visit(AssignmentSyntax &node) { };
-		void visit(OperatorSyntax &node) { };
-		void visit(ListSyntax &node) { };
-		void visit(IdentifierSyntax &node) { };
-		void visit(LiteralSyntax &node) { };
-		void visit(BracketSyntax &node) { };
-		void visit(ListSyntax &node) { };
+		virtual void visit(ExpressionSyntax &node) { };
+		virtual void visit(LookupSyntax &node) { };
+		virtual void visit(GenericInitializationSyntax &node) { };
+		virtual void visit(InvokeSyntax &node) { };
+		virtual void visit(NewSyntax &node) { };
+		virtual void visit(PrefixOperatorSyntax &node) { };
+		virtual void visit(AssignmentSyntax &node) { };
+		virtual void visit(OperatorSyntax &node) { };
+		virtual void visit(ListSyntax &node) { };
+		virtual void visit(IdentifierSyntax &node) { };
+		virtual void visit(LiteralSyntax &node) { };
+		virtual void visit(BracketSyntax &node) { };
 	};
 }

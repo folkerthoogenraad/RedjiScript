@@ -45,8 +45,8 @@ namespace redji {
 		std::shared_ptr<TypeSyntax> parseType();
 
 		TypeNameSyntax parseTypeName();
-		ParameterSyntax parseParameter();
-		std::vector<ParameterSyntax> parseParameterList();
+		std::shared_ptr<ParameterSyntax> parseParameter();
+		std::vector<std::shared_ptr<ParameterSyntax>> parseParameterList();
 		
 		void unexpectedToken() { unexpectedToken(current(), std::vector<Token::Type>()); }
 		void unexpectedToken(Token token) { unexpectedToken(token, std::vector<Token::Type>()); };

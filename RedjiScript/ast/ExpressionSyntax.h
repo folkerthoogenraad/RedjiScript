@@ -94,9 +94,17 @@ namespace redji {
 		virtual void toString(std::ostream &stream) const;
 	};
 
-	class IdentifierSyntax : public ExpressionSyntax{
+	class IdentifierSyntax : public ExpressionSyntax {
 	public:
 		std::string m_Name;
+
+		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
+		virtual void toString(std::ostream &stream) const;
+	};
+
+	class NewSyntax : public ExpressionSyntax {
+	public:
+		std::shared_ptr<TypeSyntax> m_Type;
 
 		void accept(SyntaxVisitor &visitor) override { visitor.visit(*this); }
 		virtual void toString(std::ostream &stream) const;

@@ -449,6 +449,33 @@ namespace redji {
 			next();
 			return exp;
 		}
+		// Operator new
+		else if (current().m_Type == Token::OperatorNew) {
+			auto exp = std::make_shared<NewSyntax>();
+
+			exp->m_Token = current();
+
+			// Consume new
+			next();
+
+			exp->m_Type = parseType();
+
+			if (current().m_Type != Token::OpenBracket) {
+				unexpectedToken(current(), Token::OpenBracket);
+			}
+
+			// Consume open bracket
+			next();
+
+			if (current().m_Type != Token::CloseBracket) {
+				unexpectedToken(current(), Token::CloseBracket);
+			}
+
+			// Consume Close bracket
+			next();
+
+			return exp;
+		}
 		else {
 			// TODO I should really figure out whether or not I should consume the token when its unexpected.
 			// I probably should, because it can cause infinite loops if I don't.
@@ -778,16 +805,16 @@ namespace redji {
 		return type;
 	}
 
-	ParameterSyntax Parser::parseParameter()
+	std::shared_ptr<ParameterSyntax> Parser::parseParameter()
 	{
-		ParameterSyntax nameAndType;
+		std::shared_ptr<ParameterSyntax> nameAndType = std::make_shared<ParameterSyntax>();
 
 		if (current().m_Type != Token::Identifier) {
 			unexpectedToken(current(), Token::Identifier);
 			return nameAndType;
 		}
 
-		nameAndType.m_Name = current().m_Data;
+		nameAndType->m_Name = current().m_Data;
 		
 		if (next().m_Type != Token::Colon) {
 			// Name and type without type.
@@ -796,14 +823,14 @@ namespace redji {
 
 		next();
 
-		nameAndType.m_Type = parseType();
+		nameAndType->m_Type = parseType();
 
 		return nameAndType;
 	}
 
-	std::vector<ParameterSyntax> Parser::parseParameterList()
+	std::vector<std::shared_ptr<ParameterSyntax>> Parser::parseParameterList()
 	{
-		std::vector<ParameterSyntax> list;
+		std::vector<std::shared_ptr<ParameterSyntax>> list;
 
 		// Add the first item
 		list.push_back(parseParameter());
@@ -813,7 +840,7 @@ namespace redji {
 			list.push_back(parseParameter());
 		}
 
-		return std::move(list);
+		return list;
 	}
 
 	void Parser::unexpectedToken(Token token, std::vector<Token::Type> expected)

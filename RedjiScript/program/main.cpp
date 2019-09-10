@@ -133,10 +133,16 @@ void compileFile(const std::string &fileName) {
 	Parser parser(result);
 	auto parsedUnit = parser.parseAll();
 
-	SymbolTable table;
-	table.process(parsedUnit);
+	auto table = std::make_shared<SymbolTable>();
+	table->process(parsedUnit);
 
 	CPPGenerator cpp;
-	std::string s = cpp.generate(*parsedUnit);
+	std::string s = cpp.generate(table, *parsedUnit);
+
+	LOG(s);
+
+	std::ofstream stream("output.cpp");
+	stream << s;
+	stream.close();
 }
 

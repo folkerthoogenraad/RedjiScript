@@ -1,17 +1,24 @@
 #pragma once
 
-#include "ast/SyntaxVisitor.h"
 #include <string>
 #include <sstream>
+#include <memory>
+
+#include "ast/SyntaxVisitor.h"
+#include "types/SymbolTable.h"
 #include "logger/Logger.h"
 
 namespace redji {
-	class CPPGenerator : SyntaxVisitor {
+	class CPPGenerator : SyntaxVisitor{
 		std::stringstream stream;
 
 		Logger logger;
+		std::shared_ptr<SymbolTable> m_Symbols;
+
+		std::shared_ptr<FunctionSymbol> m_FunctionSymbol;
+		std::shared_ptr<SymbolScope> m_SymbolScope;
 	public:
-		std::string generate(CompilationUnit &node);
+		std::string generate(std::shared_ptr<SymbolTable> m_Symbols, CompilationUnit &node);
 
 		// Default
 		void visit(SyntaxNode &node);
@@ -44,6 +51,12 @@ namespace redji {
 		void visit(IdentifierSyntax &node);
 		void visit(LiteralSyntax &node);
 		void visit(BracketSyntax &node);
+		void visit(NewSyntax &node);
+
+		void printNode(SyntaxNode &node);
+		void print(const std::string &string);
+
+		void printType(TypeSymbol &type);
 	};
 
 }

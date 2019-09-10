@@ -7,7 +7,7 @@
 
 namespace redji {
 
-	class ParameterSyntax {
+	class ParameterSyntax : public SyntaxNode{
 	public:
 		std::string m_Name;
 		std::shared_ptr<TypeSyntax> m_Type;

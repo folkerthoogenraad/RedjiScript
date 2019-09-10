@@ -106,4 +106,11 @@ namespace redji {
 		m_Expression->toString(stream);
 		stream << ")";
 	}
+
+	void NewSyntax::toString(std::ostream & stream) const
+	{
+		stream << "new ";
+		m_Type->toString(stream);
+		stream << "()";
+	}
 }

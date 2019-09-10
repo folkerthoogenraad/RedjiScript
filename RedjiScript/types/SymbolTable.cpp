@@ -37,8 +37,10 @@ namespace redji {
 			type->m_Name = cls->m_Name.m_Name;
 			type->m_Definition = cls;
 
+
 			classQueue.push(type);
 
+			insertSymbol(cls.get(), type);
 			m_RootNamespace->addClass(type);
 		}
 
@@ -61,6 +63,7 @@ namespace redji {
 				member->m_Name = m->m_Name;
 				member->setType(type);
 
+				insertSymbol(m.get(), member);
 				symbol->addMember(member);
 			}
 		}
@@ -83,14 +86,18 @@ namespace redji {
 			function->m_ReturnType = createTypeSymbol(fn->m_ReturnType);
 			function->m_Definition = fn;
 
+			insertSymbol(fn.get(), function);
+
 			// Get the parameters
 			for (auto& p : fn->m_Parameters) {
 				auto parameter = std::make_shared<ParameterSymbol>();
 
-				parameter->m_Name = p.m_Name;
-				parameter->m_Type = createTypeSymbol(p.m_Type);
+				parameter->m_Name = p->m_Name;
+				parameter->m_Type = createTypeSymbol(p->m_Type);
 
 				function->m_Parameters.push_back(parameter);
+
+				insertSymbol(p.get(), parameter);
 			}
 
 			functionsQueue.push(function);
@@ -105,6 +112,20 @@ namespace redji {
 			processFunction(symbol);
 		}
 
+	}
+
+	void SymbolTable::insertSymbol(SyntaxNode* node, std::shared_ptr<Symbol> sym)
+	{
+		m_Symbols[node] = sym;
+	}
+
+	std::shared_ptr<Symbol> SymbolTable::findSymbol(SyntaxNode* node)
+	{
+		auto f = m_Symbols.find(node);
+		if (f == m_Symbols.end()) {
+			return nullptr;
+		}
+		return f->second;
 	}
 
 	std::shared_ptr<TypeSymbol> SymbolTable::createTypeSymbol(std::shared_ptr<TypeSyntax> syntax)
@@ -149,7 +170,7 @@ namespace redji {
 		// Process blocks
 		if (auto block = std::dynamic_pointer_cast<BlockSyntax>(statement)) {
 			// Create a child scope
-			auto scp = scope->createChildScope();
+			auto scp = scope->createChildScope(block);
 
 			// Process all the statements in that block
 			for (auto &i : block->m_Statements) {
@@ -184,11 +205,12 @@ namespace redji {
 			}
 
 			if (local->m_InitialValue != nullptr) {
-				if (localSymbol->m_Type != scope->findTypeOf(local->m_InitialValue)) {
+				if (!localSymbol->m_Type->equals(*scope->findTypeOf(local->m_InitialValue))) {
 					logger.logError("Type mismatch at variable ", localSymbol->m_Name, ".");
 				}
 			}
 
+			insertSymbol(local.get(), localSymbol);
 			scope->addDefinition(localSymbol);
 		}
 	}
@@ -236,7 +258,7 @@ namespace redji {
 				logger.logError("Unkown type of ", *identifierSyntax, ".");
 				return;
 			}
-			
+
 			scope->setTypeOf(identifierSyntax, var->m_Type);
 		}
 
@@ -252,7 +274,7 @@ namespace redji {
 			}
 
 			auto cls = std::dynamic_pointer_cast<ClassSymbol>(type->m_Class);
-			
+
 			if (cls == nullptr) {
 				logger.logError("Type is not a class :", *lookupSyntax);
 				return;
@@ -266,6 +288,13 @@ namespace redji {
 			}
 
 			scope->setTypeOf(lookupSyntax, v->m_Type);
+		}
+
+		// New
+		else if (auto newSyntax = std::dynamic_pointer_cast<NewSyntax>(expression)) {
+			auto type = createTypeSymbol(newSyntax->m_Type);
+
+			scope->setTypeOf(newSyntax, type);
 		}
 
 		// Invokation

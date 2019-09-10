@@ -8,7 +8,7 @@ void redji::FunctionSyntax::toString(std::ostream & stream) const
 	stream << "(";
 
 	for (int i = 0; i < m_Parameters.size(); i++) {
-		m_Parameters[i].toString(stream);
+		m_Parameters[i]->toString(stream);
 		if (i != m_Parameters.size() - 1)
 			stream << ", ";
 	}

@@ -13,12 +13,17 @@ namespace redji {
 
 	class SymbolTable {
 		std::shared_ptr<NamespaceSymbol> m_RootNamespace;
+
+		std::map<SyntaxNode*, std::shared_ptr<Symbol>> m_Symbols;
+
 		Logger logger;
 	public:
 		SymbolTable();
 
 		void process(std::shared_ptr<CompilationUnit> unit);
 
+		void insertSymbol(SyntaxNode* node, std::shared_ptr<Symbol> sym);
+		std::shared_ptr<Symbol> findSymbol(SyntaxNode* node);
 	private:
 		std::shared_ptr<TypeSymbol> createTypeSymbol(std::shared_ptr<TypeSyntax> syntax);
 

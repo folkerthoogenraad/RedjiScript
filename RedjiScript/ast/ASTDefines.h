@@ -31,4 +31,5 @@ namespace redji {
 	class IdentifierSyntax;
 	class LiteralSyntax;
 	class BracketSyntax;
+	class NewSyntax;
 }

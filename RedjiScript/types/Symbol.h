@@ -53,7 +53,9 @@ namespace redji {
 		std::shared_ptr<LocalSyntax> m_Definition;
 	};
 
-	struct IClassSymbol : public Symbol { };
+	struct IClassSymbol : public Symbol { 
+		virtual std::string getName() = 0;
+	};
 
 	struct ClassSymbol : public IClassSymbol {
 		std::string m_Name;
@@ -66,6 +68,8 @@ namespace redji {
 
 		void addMember(std::shared_ptr<MemberSymbol> mem);
 		virtual std::shared_ptr<NamedTypeSymbol> findVariableByName(const std::string &name);
+
+		virtual std::string getName() { return m_Name;};
 	};
 
 	class BuiltinClassSymbol : public IClassSymbol {
@@ -74,7 +78,7 @@ namespace redji {
 			Integer, Float, String, Void
 		};
 
-	private:
+	public:
 		Subtype m_Type;
 
 	public:
@@ -84,6 +88,9 @@ namespace redji {
 		static std::shared_ptr<BuiltinClassSymbol> getInteger();
 		static std::shared_ptr<BuiltinClassSymbol> getString();
 		static std::shared_ptr<BuiltinClassSymbol> getVoid();
+
+
+		virtual std::string getName();
 	};
 
 
@@ -110,15 +117,18 @@ namespace redji {
 
 		std::vector<std::shared_ptr<SymbolScope>> m_Children;
 		std::vector<std::shared_ptr<NamedTypeSymbol>> m_Variables;
+
+		std::shared_ptr<BlockSyntax> m_Definition;
 	public:
 		void setTypeOf(std::shared_ptr<ExpressionSyntax> syntax, std::shared_ptr<TypeSymbol> type);
 		std::shared_ptr<TypeSymbol> findTypeOf(std::shared_ptr<ExpressionSyntax> syntax);
 
 		void setParent(SymbolScope *scope);
 
-		std::shared_ptr<SymbolScope> createChildScope();
+		std::shared_ptr<SymbolScope> createChildScope(std::shared_ptr<BlockSyntax> scope);
 
 		std::shared_ptr<NamedTypeSymbol> findDefinition(const std::string &name);
+		std::shared_ptr<SymbolScope> findChild(BlockSyntax *block);
 		void addDefinition(std::shared_ptr<NamedTypeSymbol> symbol);
 	};
 
